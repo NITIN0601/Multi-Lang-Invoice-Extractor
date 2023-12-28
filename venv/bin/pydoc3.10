@@ -1,0 +1,5 @@
+#!/Users/nitin/Documents/GitHub/Multi-Lang-Invoice-Extractor/venv/bin/python3.10
+
+import pydoc
+if __name__ == '__main__':
+    pydoc.cli()

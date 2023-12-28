@@ -1,0 +1,6 @@
+streamlit==0.75.0
+google-generativeai
+python-dotenv
+langchain
+PyPDF2
+chromadb
