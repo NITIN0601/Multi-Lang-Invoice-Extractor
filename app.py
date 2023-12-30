@@ -77,17 +77,15 @@ file_type = st.radio ('Choose file type :',['Image','PDF'],index=0)
 
 if file_type == 'Image':
     uploaded_file = st.file_uploader("Upload an Image ", type=["jpg","jpeg","png"])
-    if uploaded_file is not None:
-        image_data = Image.open(uploaded_file)
-        st.image(image_data, caption= "Uploaded Image", use_column_width=True)
+    image_data = Image.open(uploaded_file)
+    st.image(image_data, caption= "Uploaded Image", use_column_width=True)
 else:
     uploaded_file = st.file_uploader("Upload the PDF ", type=["pdf"])
-    if uploaded_file is not None:
-        image_data = pdf_to_images(uploaded_file)
-        for page in image_data:
-            image = Image.open(BytesIO(page["image"]))
-            st.image(image,caption=f"Page{page['page_num']}")
-            
+    image_data = pdf_to_images(uploaded_file)
+    for page in image_data:
+        image = Image.open(BytesIO(page["image"]))
+        st.image(image,caption=f"Page{page['page_num']}")
+
 submit = st.button(" Tell me about the invoice ")
 
 input_prompt = """
