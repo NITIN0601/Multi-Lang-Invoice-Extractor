@@ -6,6 +6,7 @@ from PIL import Image
 from io import BytesIO
 import fitz # PyMuPDF which uses PDF files
 
+
 load_dotenv() # Which loads all the env varibales from .env
 
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
@@ -38,7 +39,7 @@ def input_image_details(uploaded_file):
             images = pdf_to_images(uploaded_file)
             return images
         else:
-            # For other image types, read the file into bytes
+            # Read the Imagefile into bytes
             bytes_data = uploaded_file.getvalue()
             image_parts = [{"mime_type": uploaded_file.type, "data": bytes_data}]
             return image_parts
@@ -46,8 +47,13 @@ def input_image_details(uploaded_file):
         raise FileNotFoundError("No File Uploaded")
 
 
-
+# New function to handle PDF conversion 
 def pdf_to_images(uploaded_file):
+    """
+    Function: To convert the uploaded pdf file to images
+    input: Uploaded_file (PDF)
+    output: Returns the images
+    """
     pdf_images = []
     pdf_document = fitz.open(stream=uploaded_file.read(), filetype="pdf")
 
@@ -67,18 +73,21 @@ def pdf_to_images(uploaded_file):
 st.set_page_config(page_title = " Multi-Lang Invoice Extractor ")
 st.header("Gemini GenAI Application : Multi-Lang Invoice Extractor ")
 input = st.text_input("Input Prompt: ",key = "input")
-uploaded_file = st.file_uploader("Choose an image of the invoice .....", type=["jpg","jpeg","png","pdf"])
-images = []
+file_type = st.radio ('Choose file type :',['Image','PDF'],index=0)
 
-if uploaded_file is not None:
-    if uploaded_file.type == 'application/pdf':
-        images = pdf_to_images(uploaded_file)
-    else:
-        images = [{"image": Image.open(uploaded_file).convert("RGB").save(None, "PNG"), "page_num": 1}]
-   
-for image_data in images:
-    st.image(Image.open(BytesIO(image_data["image"])), caption=f"Page {image_data['page_num']}", use_column_width=True)
-
+if file_type == 'Image':
+    uploaded_file = st.file_uploader("Upload an Image ", type=["jpg","jpeg","png"])
+    if uploaded_file is not None:
+        image_data = Image.open(uploaded_file)
+        st.image(image_data, caption= "Uploaded Image", use_column_width=True)
+else:
+    uploaded_file = st.file_uploader("Upload the PDF ", type=["pdf"])
+    if uploaded_file is not None:
+        image_data = pdf_to_images(uploaded_file)
+        for page in image_data:
+            image = Image.open(BytesIO(page["image"]))
+            st.image(image,caption=f"Page{page['page_num']}")
+            
 submit = st.button(" Tell me about the invoice ")
 
 input_prompt = """
