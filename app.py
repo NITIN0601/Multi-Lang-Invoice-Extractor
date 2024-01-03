@@ -14,7 +14,7 @@ genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 # Load Gemini Pro Vision
 model = genai.GenerativeModel('gemini-pro-vision')
 
-def get_gemini_response(input, image, prompt):
+def model_response(input, image, prompt):
     """
     Gemini Model : 
     Parameters are taken in List format
@@ -23,6 +23,7 @@ def get_gemini_response(input, image, prompt):
     prompt: "what message is resulted"
     """
     response = model.generate_content([input, image[0],prompt])
+    print(response)
     return response.text
 
 
@@ -114,6 +115,6 @@ You are an expert in understanding invoices. We will upload an image as inovice 
 # If the Submit button is selected
 if submit:
     image_data = input_image_details(uploaded_file)
-    response = get_gemini_response(input_prompt,image_data,input)
+    response = model_response(input_prompt,image_data,input)
     st.subheader("The Response is : ")
     st.write(response)
